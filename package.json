@@ -7,6 +7,11 @@
   "bin": {
     "feishu-project-mcp": "dist/cli.js"
   },
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
   "scripts": {
     "build": "tsc",
     "clean": "rimraf dist coverage",
@@ -37,7 +42,7 @@
     "requirements",
     "development"
   ],
-  "author": "",
+  "author": "im47cn <dreambt@gmail.com>",
   "license": "MIT",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.0",
@@ -72,5 +77,13 @@
   },
   "engines": {
     "node": ">=18.0.0"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/im47cn/feishu-project-mcp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/im47cn/feishu-project-mcp/issues"
+  },
+  "homepage": "https://github.com/im47cn/feishu-project-mcp#readme"
 }

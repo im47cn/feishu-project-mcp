@@ -73,6 +73,50 @@ npm run build
 npm start
 ```
 
+### 使用npx调用
+
+本项目支持通过npx调用，但目前尚未发布到npm注册表。在发布之前，你可以通过以下方式使用npx调用：
+
+#### 从本地项目调用
+
+在项目目录中运行：
+
+```bash
+# 先构建项目
+npm run build
+
+# 使用npx调用本地包
+npx . [参数]
+```
+
+或者使用完整路径：
+
+```bash
+npx /path/to/feishu-project-mcp [参数]
+```
+
+#### 传递参数
+
+你可以向npx命令传递参数：
+
+```bash
+npx . --port 3001 --host 0.0.0.0
+```
+
+#### 发布后使用
+
+当项目发布到npm注册表后，你可以直接使用：
+
+```bash
+npx feishu-project-mcp [参数]
+```
+
+并且可以指定版本：
+
+```bash
+npx feishu-project-mcp@1.0.0 [参数]
+```
+
 ### 使用Docker
 
 ```bash
@@ -120,6 +164,70 @@ docker run -p 3000:3000 --env-file .env feishu-project-mcp
 ```
 
 3. 保存文件并重启Cline
+
+### 使用npx在Cline中配置
+
+当项目发布到npm注册表后，你可以使用npx在Cline中配置MCP服务：
+
+```json
+"feishu-project-mcp": {
+  "command": "npx",
+  "args": [
+    "feishu-project-mcp"
+  ],
+  "env": {
+    "FEISHU_APP_ID": "your_app_id",
+    "FEISHU_APP_SECRET": "your_app_secret",
+    "FEISHU_API_URL": "https://project.feishu.cn/open_api"
+  },
+  "disabled": false,
+  "alwaysAllow": [
+    "health",
+    "health.components",
+    "health.integrations",
+    "health.tasks",
+    "health.memory",
+    "feishu.projects",
+    "feishu.requirements",
+    "feishu.bugs",
+    "task.create",
+    "task.get",
+    "mode.analyze",
+    "mode.implement"
+  ]
+}
+```
+
+在发布之前，你应该使用完整路径：
+
+```json
+"feishu-project-mcp": {
+  "command": "npx",
+  "args": [
+    "/absolute/path/to/feishu-project-mcp"
+  ],
+  "env": {
+    "FEISHU_APP_ID": "your_app_id",
+    "FEISHU_APP_SECRET": "your_app_secret",
+    "FEISHU_API_URL": "https://project.feishu.cn/open_api"
+  },
+  "disabled": false,
+  "alwaysAllow": [
+    "health",
+    "health.components",
+    "health.integrations",
+    "health.tasks",
+    "health.memory",
+    "feishu.projects",
+    "feishu.requirements",
+    "feishu.bugs",
+    "task.create",
+    "task.get",
+    "mode.analyze",
+    "mode.implement"
+  ]
+}
+```
 
 ## API文档
 
