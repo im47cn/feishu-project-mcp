@@ -147,8 +147,8 @@ export class McpService {
       // Initialize Feishu integrator
       await this.feishuIntegrator.initialize();
 
-      // Create storage directories
-      await this.taskManager.createStorageDirectories();
+      // Initialize task manager
+      await this.taskManager.initialize();
 
       // Register tools
       this.registerTools();

@@ -9,7 +9,8 @@ import {
 import { Logger } from '../utils/logger.js';
 import { FeishuIntegrator } from '../integrators/feishu.js';
 import { TaskManager } from '../managers/task.js';
-import { TaskType } from '../types/task.js';
+import { Task, TaskType, TaskStatus } from '../types/task.js';
+import { v4 as uuidv4 } from 'uuid';
 
 export function registerFeishuTools(
   server: McpServer,
@@ -130,15 +131,21 @@ export function registerTaskTools(
     ],
     execute: async (params: CreateTaskParam): Promise<McpToolResponse> => {
       try {
-        const task = await taskManager.createTask(
-          params.type as TaskType,
-          params.itemId,
-          params.itemType
-        );
+        const task: Task = {
+          id: uuidv4(),
+          type: params.type as TaskType,
+          status: TaskStatus.PENDING,
+          itemId: params.itemId,
+          itemType: params.itemType,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        };
+
+        const createdTask = await taskManager.createTask(task);
 
         return {
           success: true,
-          data: task,
+          data: createdTask,
         };
       } catch (error) {
         logger.error('Failed to create task', { error, params });
@@ -213,14 +220,21 @@ export function registerModeTools(
     ],
     execute: async (params: ItemParam): Promise<McpToolResponse> => {
       try {
-        const type =
-          params.itemType === 'requirement' ? TaskType.REQUIREMENT_ANALYSIS : TaskType.BUG_ANALYSIS;
+        const task: Task = {
+          id: uuidv4(),
+          type: TaskType.REQUIREMENT_ANALYSIS,
+          status: TaskStatus.PENDING,
+          itemId: params.itemId,
+          itemType: params.itemType,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        };
 
-        const task = await taskManager.createTask(type, params.itemId, params.itemType);
+        const createdTask = await taskManager.createTask(task);
 
         return {
           success: true,
-          data: task,
+          data: createdTask,
         };
       } catch (error) {
         logger.error('Failed to start analysis', { error, params });
@@ -252,15 +266,21 @@ export function registerModeTools(
     ],
     execute: async (params: ItemParam): Promise<McpToolResponse> => {
       try {
-        const task = await taskManager.createTask(
-          TaskType.CODE_IMPLEMENTATION,
-          params.itemId,
-          params.itemType
-        );
+        const task: Task = {
+          id: uuidv4(),
+          type: TaskType.CODE_IMPLEMENTATION,
+          status: TaskStatus.PENDING,
+          itemId: params.itemId,
+          itemType: params.itemType,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        };
+
+        const createdTask = await taskManager.createTask(task);
 
         return {
           success: true,
-          data: task,
+          data: createdTask,
         };
       } catch (error) {
         logger.error('Failed to start implementation', { error, params });
