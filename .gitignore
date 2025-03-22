@@ -86,3 +86,4 @@ $RECYCLE.BIN/
 
 
 .env.development
+package-lock.json
