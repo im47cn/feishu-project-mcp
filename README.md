@@ -2,6 +2,9 @@
 
 基于Model Context Protocol (MCP)的智能研发流程管理系统，实现端到端的需求管理与开发流程自动化。
 
+[![npm version](https://img.shields.io/npm/v/feishu-project-mcp.svg)](https://www.npmjs.com/package/feishu-project-mcp)
+[![npm downloads](https://img.shields.io/npm/dm/feishu-project-mcp.svg)](https://www.npmjs.com/package/feishu-project-mcp)
+
 ## 功能特点
 
 - **需求读取与完整性分析**：从飞书项目系统中提取需求文档，进行深度分析并评估需求完整性
@@ -473,15 +476,6 @@ GitHub Actions将自动运行工作流，将包发布到npm。
    ```bash
    npx feishu-project-mcp
    ```
-
-### 更新README.md
-
-发布成功后，更新README.md，添加npm徽章：
-
-```markdown
-[![npm version](https://img.shields.io/npm/v/feishu-project-mcp.svg)](https://www.npmjs.com/package/feishu-project-mcp)
-[![npm downloads](https://img.shields.io/npm/dm/feishu-project-mcp.svg)](https://www.npmjs.com/package/feishu-project-mcp)
-```
 
 ## API文档
 
