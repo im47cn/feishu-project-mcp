@@ -1,6 +1,6 @@
 {
   "name": "feishu-project-mcp",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Feishu Project MCP Service for end-to-end requirement management and development automation",
   "type": "module",
   "main": "dist/index.js",
