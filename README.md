@@ -229,6 +229,260 @@ docker run -p 3000:3000 --env-file .env feishu-project-mcp
 }
 ```
 
+## 发布到npm注册表
+
+要将项目发布到npm注册表，请按照以下步骤操作：
+
+### 准备工作
+
+1. **创建npm账号**：如果你还没有npm账号，请先在[npm官网](https://www.npmjs.com/)注册一个账号。
+
+2. **登录npm**：在本地终端登录npm：
+
+   ```bash
+   npm login
+   ```
+
+   按照提示输入用户名、密码和邮箱。
+
+3. **检查package.json**：确保package.json文件包含以下必要字段：
+
+   ```json
+   {
+     "name": "feishu-project-mcp",
+     "version": "1.0.0",
+     "description": "Feishu Project MCP Service for end-to-end requirement management and development automation",
+     "type": "module",
+     "main": "dist/index.js",
+     "bin": {
+       "feishu-project-mcp": "dist/cli.js"
+     },
+     "files": ["dist", "LICENSE", "README.md"],
+     "keywords": [
+       "feishu",
+       "mcp",
+       "project-management",
+       "automation",
+       "requirements",
+       "development"
+     ],
+     "author": "Your Name <your.email@example.com>",
+     "license": "MIT",
+     "repository": {
+       "type": "git",
+       "url": "git+https://github.com/yourusername/feishu-project-mcp.git"
+     },
+     "bugs": {
+       "url": "https://github.com/yourusername/feishu-project-mcp/issues"
+     },
+     "homepage": "https://github.com/yourusername/feishu-project-mcp#readme"
+   }
+   ```
+
+4. **创建.npmignore文件**：创建.npmignore文件，指定不包含在npm包中的文件：
+   ```
+   .git
+   .github
+   .husky
+   .vscode
+   node_modules
+   src
+   tests
+   .editorconfig
+   .env*
+   .eslintrc*
+   .gitignore
+   .lintstagedrc*
+   .prettierrc
+   commitlint.config.cjs
+   docker-compose*
+   Dockerfile*
+   jest.config.cjs
+   nodemon.json
+   tsconfig.json
+   ```
+
+### 手动发布
+
+1. **构建项目**：
+
+   ```bash
+   npm run build
+   ```
+
+2. **测试包**：在发布前，可以使用npm pack命令创建一个tarball，但不实际发布：
+
+   ```bash
+   npm pack
+   ```
+
+   这将创建一个名为`feishu-project-mcp-1.0.0.tgz`的文件。你可以在另一个目录中安装这个包进行测试：
+
+   ```bash
+   npm install /path/to/feishu-project-mcp-1.0.0.tgz
+   ```
+
+3. **发布包**：确认一切正常后，发布包：
+   ```bash
+   npm publish
+   ```
+   如果是第一次发布，可能需要添加`--access=public`参数：
+   ```bash
+   npm publish --access=public
+   ```
+
+### 使用GitHub Actions自动发布
+
+1. **创建npm访问令牌**：
+
+   - 登录npm网站
+   - 点击右上角的头像，选择"Access Tokens"
+   - 点击"Generate New Token"，选择"Automation"类型
+   - 复制生成的令牌
+
+2. **添加GitHub Secrets**：
+
+   - 在GitHub仓库页面，点击"Settings"
+   - 点击"Secrets and variables" > "Actions"
+   - 点击"New repository secret"
+   - 添加名为`NPM_TOKEN`的secret，值为刚才复制的npm令牌
+
+3. **创建GitHub Actions工作流**：在仓库中创建`.github/workflows/npm-publish.yml`文件：
+
+   ```yaml
+   name: Publish to npm
+
+   on:
+     release:
+       types: [created]
+
+   jobs:
+     build:
+       runs-on: ubuntu-latest
+       steps:
+         - uses: actions/checkout@v3
+         - uses: actions/setup-node@v3
+           with:
+             node-version: '18.x'
+             registry-url: 'https://registry.npmjs.org/'
+         - run: npm ci
+         - run: npm run build
+         - run: npm test
+         - run: npm publish
+           env:
+             NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+   ```
+
+4. **创建GitHub Release**：
+   - 在GitHub仓库页面，点击"Releases"
+   - 点击"Create a new release"
+   - 输入版本号（例如v1.0.0）
+   - 添加发布说明
+   - 点击"Publish release"
+
+GitHub Actions将自动运行工作流，将包发布到npm。
+
+### 使用语义化发布
+
+如果你想更进一步自动化发布过程，可以使用semantic-release：
+
+1. **安装semantic-release**：
+
+   ```bash
+   npm install --save-dev semantic-release @semantic-release/git @semantic-release/github @semantic-release/npm @semantic-release/changelog @semantic-release/commit-analyzer @semantic-release/release-notes-generator
+   ```
+
+2. **配置semantic-release**：创建`.releaserc.json`文件：
+
+   ```json
+   {
+     "branches": ["main"],
+     "plugins": [
+       "@semantic-release/commit-analyzer",
+       "@semantic-release/release-notes-generator",
+       "@semantic-release/changelog",
+       "@semantic-release/npm",
+       "@semantic-release/github",
+       "@semantic-release/git"
+     ]
+   }
+   ```
+
+3. **创建GitHub Actions工作流**：创建`.github/workflows/semantic-release.yml`文件：
+
+   ```yaml
+   name: Semantic Release
+
+   on:
+     push:
+       branches: [main]
+
+   jobs:
+     release:
+       runs-on: ubuntu-latest
+       steps:
+         - uses: actions/checkout@v3
+           with:
+             fetch-depth: 0
+         - uses: actions/setup-node@v3
+           with:
+             node-version: '18.x'
+             registry-url: 'https://registry.npmjs.org/'
+         - run: npm ci
+         - run: npm run build
+         - run: npm test
+         - run: npx semantic-release
+           env:
+             GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+             NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+   ```
+
+### 版本更新
+
+1. **手动更新版本**：使用npm version命令更新版本号：
+
+   ```bash
+   # 补丁版本更新 (1.0.0 -> 1.0.1)
+   npm version patch
+
+   # 次要版本更新 (1.0.0 -> 1.1.0)
+   npm version minor
+
+   # 主要版本更新 (1.0.0 -> 2.0.0)
+   npm version major
+   ```
+
+   然后推送到GitHub并发布：
+
+   ```bash
+   git push --follow-tags
+   npm publish
+   ```
+
+2. **使用semantic-release自动更新版本**：如果你使用semantic-release，只需按照Conventional Commits规范提交代码，semantic-release会自动确定版本号：
+   - `fix:` 提交会触发补丁版本更新
+   - `feat:` 提交会触发次要版本更新
+   - 包含`BREAKING CHANGE:`的提交会触发主要版本更新
+
+### 发布后的验证
+
+发布成功后，你可以通过以下方式验证：
+
+1. 在npm网站上搜索你的包名
+2. 使用npx安装并运行你的包：
+   ```bash
+   npx feishu-project-mcp
+   ```
+
+### 更新README.md
+
+发布成功后，更新README.md，添加npm徽章：
+
+```markdown
+[![npm version](https://img.shields.io/npm/v/feishu-project-mcp.svg)](https://www.npmjs.com/package/feishu-project-mcp)
+[![npm downloads](https://img.shields.io/npm/dm/feishu-project-mcp.svg)](https://www.npmjs.com/package/feishu-project-mcp)
+```
+
 ## API文档
 
 ### HTTP接口
