@@ -1,0 +1,35 @@
+# 构建目录
+build/
+target/
+out/
+bin/
+
+# IDE文件
+.idea/
+*.iml
+.vscode/
+.classpath
+.project
+.settings/
+.factorypath
+
+# 编译文件
+*.class
+*.jar
+*.war
+*.ear
+
+# 日志文件
+*.log
+
+# 临时文件
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.DS_Store
+Thumbs.db
+
+# other
+.repomix
