@@ -1,12 +1,22 @@
 #!/usr/bin/env node
 
 import { Command } from 'commander';
-import { McpService } from './core/server.js';
-import { Logger } from './utils/logger.js';
-import { parseConfig } from './utils/config.js';
 import fs from 'fs/promises';
-import { version } from '../package.json' assert { type: 'json' };
+import { McpService } from './core/server.js';
+import { parseConfig } from './utils/config.js';
 import { HealthStatus } from './utils/health.js';
+import { Logger } from './utils/logger.js';
+
+import { dirname, join } from 'path';
+import { fileURLToPath } from 'url';
+
+// 获取当前文件的目录
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+// 读取package.json
+const packageJson = JSON.parse(await fs.readFile(join(__dirname, '../package.json'), 'utf8'));
+const { version } = packageJson;
 
 const program = new Command();
 
