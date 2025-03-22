@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  feishu-project-mcp:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: builder
+    image: feishu-project-mcp:dev
+    container_name: feishu-project-mcp-dev
+    ports:
+      - '3000:3000'
+      - '9229:9229' # For debugging
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - DEBUG=feishu-project-mcp:*
+    command: npm run dev:debug
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:3000/health']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - feishu-network-dev
+
+networks:
+  feishu-network-dev:
+    driver: bridge

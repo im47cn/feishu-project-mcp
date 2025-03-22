@@ -1,0 +1,36 @@
+# Use Node.js LTS as base image
+FROM node:18-alpine
+
+# Install test dependencies
+RUN apk add --no-cache \
+    git \
+    wget \
+    curl
+
+# Set working directory
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+
+# Install dependencies with development packages
+RUN npm install
+
+# Copy source code and test files
+COPY . .
+
+# Create test directories
+RUN mkdir -p \
+    storage \
+    logs \
+    coverage \
+    test-storage \
+    test-logs
+
+# Set environment variables
+ENV NODE_ENV=test
+ENV FEISHU_TOKEN=test-token
+ENV LOG_LEVEL=debug
+
+# Run tests
+CMD ["npm", "run", "test"]

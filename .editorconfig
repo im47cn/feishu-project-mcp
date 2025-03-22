@@ -1,0 +1,84 @@
+# EditorConfig is awesome: https://EditorConfig.org
+
+# top-most EditorConfig file
+root = true
+
+# Unix-style newlines with a newline ending every file
+[*]
+end_of_line = lf
+insert_final_newline = true
+charset = utf-8
+trim_trailing_whitespace = true
+
+# TypeScript and JavaScript files
+[*.{ts,js,tsx,jsx}]
+indent_style = space
+indent_size = 2
+quote_type = single
+curly_bracket_next_line = false
+spaces_around_operators = true
+spaces_around_brackets = inside
+indent_brace_style = K&R
+
+# JSON files
+[*.json]
+indent_style = space
+indent_size = 2
+
+# YAML files
+[*.{yml,yaml}]
+indent_style = space
+indent_size = 2
+
+# Markdown files
+[*.md]
+trim_trailing_whitespace = false
+indent_style = space
+indent_size = 2
+
+# Shell scripts
+[*.sh]
+indent_style = space
+indent_size = 2
+end_of_line = lf
+
+# Docker files
+[{Dockerfile,docker-compose.yml}]
+indent_style = space
+indent_size = 2
+
+# Configuration files
+[*.{ini,conf}]
+indent_style = space
+indent_size = 2
+
+# Package files
+[{package.json,package-lock.json}]
+indent_style = space
+indent_size = 2
+
+# Git files
+[.git*]
+indent_style = space
+indent_size = 2
+
+# Environment files
+[.env*]
+indent_style = space
+indent_size = 2
+
+# Test files
+[*.test.{ts,js}]
+indent_style = space
+indent_size = 2
+
+# Documentation files
+[docs/**]
+indent_style = space
+indent_size = 2
+
+# Ignore minified files
+[**.min.*]
+indent_style = ignore
+insert_final_newline = ignore
+trim_trailing_whitespace = false

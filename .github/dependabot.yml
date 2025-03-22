@@ -1,0 +1,99 @@
+# Dependabot configuration file
+# See: https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+
+version: 2
+updates:
+  # Enable version updates for npm
+  - package-ecosystem: 'npm'
+    # Look for `package.json` and `lock` files in the `root` directory
+    directory: '/'
+    # Check for updates once a week
+    schedule:
+      interval: 'weekly'
+      day: 'monday'
+      time: '09:00'
+      timezone: 'Asia/Shanghai'
+    # Labels on pull requests for version updates
+    labels:
+      - 'dependencies'
+      - 'security'
+    # Specify who to assign the PR to
+    assignees:
+      - 'maintainers'
+    # Add reviewers
+    reviewers:
+      - 'security-team'
+    # Raise pull requests for version updates against the default branch
+    target-branch: 'main'
+    # Group all updates together
+    groups:
+      dependencies:
+        patterns:
+          - '*'
+    # Set version update strategy
+    versioning-strategy: 'auto'
+    # Set the commit message style
+    commit-message:
+      prefix: 'chore'
+      include: 'scope'
+    # Limit the number of open pull requests
+    open-pull-requests-limit: 10
+
+  # Enable version updates for Docker
+  - package-ecosystem: 'docker'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+      day: 'monday'
+      time: '09:00'
+      timezone: 'Asia/Shanghai'
+    labels:
+      - 'docker'
+      - 'dependencies'
+    assignees:
+      - 'maintainers'
+    reviewers:
+      - 'security-team'
+    target-branch: 'main'
+    commit-message:
+      prefix: 'docker'
+      include: 'scope'
+
+  # Enable version updates for GitHub Actions
+  - package-ecosystem: 'github-actions'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+      day: 'monday'
+      time: '09:00'
+      timezone: 'Asia/Shanghai'
+    labels:
+      - 'ci-cd'
+      - 'dependencies'
+    assignees:
+      - 'maintainers'
+    reviewers:
+      - 'security-team'
+    target-branch: 'main'
+    commit-message:
+      prefix: 'ci'
+      include: 'scope'
+
+# Configuration options that apply to all package ecosystems
+updates-configurations:
+  # Set default reviewer and assignee behavior
+  default:
+    # Only create pull requests for security updates
+    # and not for version updates
+    security-updates-only: false
+    # Create a group of dependencies to be updated together
+    group-updates: true
+    # Limit the number of open pull requests
+    open-pull-requests-limit: 10
+    # Add labels to pull requests
+    labels:
+      - 'dependencies'
+    # Set the commit message style
+    commit-message:
+      prefix: 'chore'
+      include: 'scope'

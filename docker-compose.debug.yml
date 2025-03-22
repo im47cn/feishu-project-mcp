@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: feishu-project-mcp-debug
+    ports:
+      - '3000:3000'
+      - '9229:9229' # Debug port
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - DEBUG=feishu-project-mcp:*
+      - FEISHU_TOKEN=${FEISHU_TOKEN}
+      - FEISHU_API_URL=${FEISHU_API_URL}
+    command: npm run dev:debug
+    security_opt:
+      - seccomp:unconfined # Required for debugging
+    cap_add:
+      - SYS_PTRACE # Required for debugging
+    networks:
+      - mcp-debug-network
+
+  test:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: feishu-project-mcp-test-debug
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=test
+      - DEBUG=feishu-project-mcp:*
+    command: npm run test:debug
+    security_opt:
+      - seccomp:unconfined
+    cap_add:
+      - SYS_PTRACE
+    networks:
+      - mcp-debug-network
+
+networks:
+  mcp-debug-network:
+    name: mcp-debug-network
+    driver: bridge

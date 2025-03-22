@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  feishu-project-mcp:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: feishu-project-mcp:latest
+    container_name: feishu-project-mcp
+    ports:
+      - '3000:3000'
+    volumes:
+      - ./storage:/var/lib/feishu-project-mcp/storage
+      - ./logs:/var/log/feishu-project-mcp
+      - ./.env.production:/app/.env.production
+    environment:
+      - NODE_ENV=production
+      - DEBUG=feishu-project-mcp:*
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:3000/health']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - feishu-network
+
+  # Add more services here if needed, such as:
+  # - Redis for caching
+  # - PostgreSQL for data persistence
+  # - Elasticsearch for logging
+  # - Prometheus for metrics
+
+networks:
+  feishu-network:
+    driver: bridge

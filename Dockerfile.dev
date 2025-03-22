@@ -1,0 +1,34 @@
+# Use Node.js LTS as base image
+FROM node:18-alpine
+
+# Install development tools
+RUN apk add --no-cache \
+    git \
+    wget \
+    curl
+
+# Set working directory
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+
+# Install dependencies with development packages
+RUN npm install
+
+# Copy source code
+COPY . .
+
+# Create necessary directories
+RUN mkdir -p storage logs
+
+# Expose ports
+EXPOSE 3000
+EXPOSE 9229
+
+# Set environment variables
+ENV NODE_ENV=development
+ENV DEBUG=feishu-project-mcp:*
+
+# Start development server with debugging enabled
+CMD ["npm", "run", "dev:debug"]

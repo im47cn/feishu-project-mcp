@@ -1,0 +1,117 @@
+{
+  "service": {
+    "name": "feishu-project-mcp",
+    "version": "1.0.0",
+    "port": 3000,
+    "host": "localhost",
+    "environment": "production"
+  },
+  "feishu": {
+    "apiToken": "your_feishu_api_token_here",
+    "apiUrl": "https://open.feishu.cn/open_api/",
+    "webhookUrl": "your_webhook_url_here",
+    "appId": "your_app_id_here",
+    "appSecret": "your_app_secret_here"
+  },
+  "storage": {
+    "directory": "./storage",
+    "maxSize": "1GB",
+    "backup": {
+      "enabled": true,
+      "interval": "1d",
+      "retention": "30d",
+      "directory": "./storage/backup"
+    }
+  },
+  "logging": {
+    "level": "info",
+    "directory": "./logs",
+    "maxFiles": 7,
+    "maxSize": "10m",
+    "format": "json",
+    "console": {
+      "enabled": true,
+      "level": "debug"
+    }
+  },
+  "tasks": {
+    "maxConcurrent": 10,
+    "checkInterval": 900000,
+    "timeout": 3600000,
+    "retries": {
+      "count": 3,
+      "delay": 60000
+    },
+    "priorities": {
+      "requirement": 1,
+      "bug": 2
+    }
+  },
+  "security": {
+    "rateLimit": {
+      "enabled": true,
+      "windowMs": 900000,
+      "max": 100
+    },
+    "cors": {
+      "enabled": true,
+      "origins": ["http://localhost:3000"],
+      "methods": ["GET", "POST", "PUT", "DELETE"],
+      "allowedHeaders": ["Content-Type", "Authorization"]
+    },
+    "helmet": {
+      "enabled": true
+    }
+  },
+  "monitoring": {
+    "health": {
+      "enabled": true,
+      "interval": 30000,
+      "path": "/health"
+    },
+    "metrics": {
+      "enabled": true,
+      "interval": 60000,
+      "path": "/metrics"
+    }
+  },
+  "notifications": {
+    "slack": {
+      "enabled": false,
+      "webhookUrl": "your_slack_webhook_url_here",
+      "channel": "#deployments"
+    },
+    "email": {
+      "enabled": false,
+      "smtp": {
+        "host": "smtp.example.com",
+        "port": 587,
+        "secure": true,
+        "auth": {
+          "user": "your_email@example.com",
+          "pass": "your_password_here"
+        }
+      },
+      "from": "noreply@example.com",
+      "to": ["admin@example.com"]
+    }
+  },
+  "git": {
+    "enabled": true,
+    "branch": "main",
+    "commitMessage": "feat: automated changes by MCP service",
+    "author": {
+      "name": "MCP Service",
+      "email": "mcp-service@example.com"
+    }
+  },
+  "development": {
+    "debug": false,
+    "swagger": {
+      "enabled": true,
+      "path": "/api-docs"
+    },
+    "mockData": false,
+    "delaySimulation": 0
+  }
+}

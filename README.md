@@ -1,125 +1,265 @@
-# Feishu Project MCP Service
+# 飞书项目MCP服务
 
-An intelligent development workflow automation service that integrates with Feishu project management system using Model Context Protocol (MCP).
+基于Model Context Protocol (MCP)的智能研发流程管理系统，实现端到端的需求管理与开发流程自动化。
 
-## Features
+## 功能特点
 
-- Automated requirement analysis and completeness checking
-- Technical design generation based on requirements
-- Code implementation assistance
-- Automated code submission via Gitlab MCP
-- Task status tracking and notification
-- Integration with Feishu project management
+- **需求读取与完整性分析**：从飞书项目系统中提取需求文档，进行深度分析并评估需求完整性
+- **需求完善反馈循环**：对不完整需求，生成精准的澄清问题清单，并更新需求状态
+- **架构设计与技术方案**：基于完整需求，生成全面技术方案，包括项目影响分析与架构决策
+- **代码实现与质量控制**：转入代码实现模式，依据技术方案高质量实现功能
+- **自动化代码提交**：调用 Gitlab MCP，实现代码自动提交与版本控制
+- **任务状态更新与通知**：完成后自动更新飞书项目状态并添加PR评论
 
-## Prerequisites
+## 系统架构
 
-- Node.js >= 16
-- TypeScript >= 4.5
-- Feishu API access token
-- MCP SDK
+系统采用模块化设计，主要包括以下组件：
 
-## Installation
+- **核心服务器**：基于Express实现的HTTP服务器，提供健康检查和MCP工具接口
+- **飞书集成器**：负责与飞书API交互，获取项目、需求和缺陷信息
+- **任务管理器**：负责管理系统内部任务，包括创建、查询、更新和删除
+- **健康检查器**：负责监控系统各组件的健康状态
 
-1. Clone the repository:
+详细的架构设计请参考[设计文档](docs/design.md)。
+
+## 快速开始
+
+### 前置条件
+
+- Node.js 18+
+- 飞书项目系统账号和API凭证
+
+### 安装
+
 ```bash
+# 克隆仓库
 git clone https://github.com/yourusername/feishu-project-mcp.git
 cd feishu-project-mcp
-```
 
-2. Install dependencies:
-```bash
+# 安装依赖
 npm install
 ```
 
-3. Build the project:
-```bash
-npm run build
+### 配置
+
+创建`.env`文件，配置以下环境变量：
+
+```
+# Feishu API Configuration
+FEISHU_APP_ID=your_app_id
+FEISHU_APP_SECRET=your_app_secret
+FEISHU_API_URL=https://project.feishu.cn/open_api
+
+# Service Configuration
+CHECK_INTERVAL=5000
+STORAGE_DIR=./storage
+LOG_DIR=./logs
+LOG_LEVEL=info
+MAX_CONCURRENT_TASKS=5
+
+# Server Configuration
+PORT=3000
+HOST=localhost
 ```
 
-## Configuration
+### 运行
 
-Create a configuration file or use command line arguments to provide the following settings:
-
-- `--feishu-token`: Feishu API access token (required)
-- `--feishu-api-url`: Custom Feishu API URL (optional)
-- `--check-interval`: Interval for checking projects in milliseconds (default: 900000)
-- `--storage-dir`: Directory for storing task data (default: ./storage)
-- `--log-dir`: Directory for log files (default: ./logs)
-- `--log-level`: Logging level (default: info)
-- `--max-concurrent-tasks`: Maximum number of concurrent tasks (default: 10)
-
-## Usage
-
-1. Start the service:
 ```bash
-npm start -- --feishu-token YOUR_TOKEN
-```
-
-2. With custom configuration:
-```bash
-npm start -- \
-  --feishu-token YOUR_TOKEN \
-  --check-interval 300000 \
-  --log-level debug \
-  --max-concurrent-tasks 5
-```
-
-## Development
-
-1. Start in development mode:
-```bash
+# 开发模式
 npm run dev
+
+# 生产模式
+npm run build
+npm start
 ```
 
-2. Run tests:
+### 使用Docker
+
 ```bash
-npm test
+# 构建镜像
+docker build -t feishu-project-mcp .
+
+# 运行容器
+docker run -p 3000:3000 --env-file .env feishu-project-mcp
 ```
 
-3. Lint code:
+## 在Cline中配置MCP服务
+
+要在Cline的MCP设置文件中配置飞书项目MCP服务，请按照以下步骤操作：
+
+1. 打开MCP设置文件：`cline_mcp_settings.json`
+2. 在`mcpServers`对象中添加一个新条目，如下所示：
+
+```json
+"feishu-project-mcp": {
+  "command": "node",
+  "args": [
+    "/path/to/feishu-project-mcp/dist/index.js"
+  ],
+  "env": {
+    "FEISHU_APP_ID": "your_app_id",
+    "FEISHU_APP_SECRET": "your_app_secret",
+    "FEISHU_API_URL": "https://project.feishu.cn/open_api"
+  },
+  "disabled": false,
+  "alwaysAllow": [
+    "health",
+    "health.components",
+    "health.integrations",
+    "health.tasks",
+    "health.memory",
+    "feishu.projects",
+    "feishu.requirements",
+    "feishu.bugs",
+    "task.create",
+    "task.get",
+    "mode.analyze",
+    "mode.implement"
+  ]
+}
+```
+
+3. 保存文件并重启Cline
+
+## API文档
+
+### HTTP接口
+
+#### 健康检查接口
+
+```
+GET /health
+```
+
+返回系统健康状态信息，包括组件状态、集成状态、任务状态和内存使用情况。
+
+#### MCP工具接口
+
+```
+POST /mcp
+```
+
+请求体格式：
+
+```json
+{
+  "tool": "工具名称",
+  "params": {
+    "参数1": "值1",
+    "参数2": "值2"
+  }
+}
+```
+
+### MCP工具
+
+#### 健康检查工具
+
+- **health**: 获取完整的健康状态
+- **health.components**: 获取组件健康状态
+- **health.integrations**: 获取集成健康状态
+- **health.tasks**: 获取任务健康状态
+- **health.memory**: 获取内存使用情况
+
+#### 飞书集成工具
+
+- **feishu.projects**: 获取飞书项目列表
+- **feishu.requirements**: 获取项目需求列表
+- **feishu.bugs**: 获取项目缺陷列表
+
+#### 任务管理工具
+
+- **task.create**: 创建任务
+- **task.get**: 获取任务详情
+
+#### 模式工具
+
+- **mode.analyze**: 分析需求或缺陷
+- **mode.implement**: 实现需求或修复缺陷
+
+## 工作流程示例
+
+### 需求分析流程
+
+1. 获取项目列表：
+
 ```bash
-npm run lint
+curl -X POST -H "Content-Type: application/json" -d '{"tool":"feishu.projects"}' http://localhost:3000/mcp
 ```
 
-4. Format code:
+2. 获取需求列表：
+
 ```bash
-npm run format
+curl -X POST -H "Content-Type: application/json" -d '{"tool":"feishu.requirements","params":{"projectId":"project1"}}' http://localhost:3000/mcp
 ```
 
-## Project Structure
+3. 分析需求：
 
-```
-feishu-project-mcp/
-├── src/
-│   ├── core/           # Core MCP service implementation
-│   ├── integrators/    # External service integrations
-│   ├── managers/       # Business logic managers
-│   ├── types/          # TypeScript type definitions
-│   ├── utils/          # Utility functions and helpers
-│   └── index.ts        # Application entry point
-├── docs/              # Documentation
-├── tests/            # Test files
-└── package.json
+```bash
+curl -X POST -H "Content-Type: application/json" -d '{"tool":"mode.analyze","params":{"itemId":"requirement1","itemType":"requirement"}}' http://localhost:3000/mcp
 ```
 
-## Documentation
+4. 获取任务状态：
 
-- [Architecture Decision Records](docs/ADR/)
-- [API Documentation](docs/api.md)
-- [Development Guide](docs/development.md)
+```bash
+curl -X POST -H "Content-Type: application/json" -d '{"tool":"task.get","params":{"taskId":"task1"}}' http://localhost:3000/mcp
+```
 
-## Contributing
+## 开发指南
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+### 提交消息规范
 
-## License
+本项目使用[Conventional Commits](https://www.conventionalcommits.org/)规范来格式化提交消息。每个提交消息都应该遵循以下格式：
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+```
+<type>(<scope>): <subject>
 
-## Support
+<body>
 
-For support, please open an issue in the GitHub repository or contact the development team.
+<footer>
+```
+
+其中：
+
+- **type**: 表示提交的类型，如feat、fix、docs等
+- **scope**: （可选）表示提交影响的范围，如core、server等
+- **subject**: 简短描述提交的内容
+- **body**: （可选）详细描述提交的内容
+- **footer**: （可选）包含重大变更或关闭issue的信息
+
+示例：
+
+```
+feat(server): add health check endpoint
+
+Add a new endpoint to check the health of the server and its components.
+
+Closes #123
+```
+
+项目中已经配置了commitlint和husky，会在提交前自动检查提交消息是否符合规范。你可以使用`.github/commit-template.txt`作为提交消息的模板。
+
+### 代码风格
+
+本项目使用ESLint和Prettier来保持代码风格的一致性。在提交代码前，会自动运行lint-staged来检查和修复代码风格问题。
+
+## 贡献指南
+
+欢迎贡献代码、报告问题或提出改进建议。请遵循以下步骤：
+
+1. Fork仓库
+2. 创建功能分支：`git checkout -b feature/your-feature`
+3. 提交更改：`git commit -am 'feat: add some feature'`
+4. 推送到分支：`git push origin feature/your-feature`
+5. 提交Pull Request
+
+## 许可证
+
+本项目采用MIT许可证，详情请参阅[LICENSE](LICENSE)文件。
+
+## 联系方式
+
+如有问题或建议，请通过以下方式联系我们：
+
+- 提交Issue
+- 发送邮件至：your-email@example.com
