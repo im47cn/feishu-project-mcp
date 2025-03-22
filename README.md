@@ -619,3 +619,7 @@ Closes #123
 
 - 提交Issue
 - 发送邮件至：dreambt@gmail.com
+
+## 提示
+
+在包发布到npm注册表之前，请使用本地路径来调用这个包，而不是尝试从npm注册表安装。这样可以避免出现"package was not found"的警告和连接关闭的错误。

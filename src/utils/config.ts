@@ -1,6 +1,19 @@
-import { ServerConfig } from '../core/server.js';
 import dotenv from 'dotenv';
 import path from 'path';
+import { ServerConfig } from '../core/server.js';
+
+export interface McpServiceConfig {
+  name: string;
+  version: string;
+  feishuToken: string;
+  storageDir: string;
+  logDir: string;
+  logLevel: LogLevel; // Use the LogLevel type
+  maxConcurrentTasks: number;
+  checkInterval: number;
+}
+
+export type LogLevel = 'info' | 'warn' | 'error'; // Define LogLevel as a type
 
 export function parseConfig(args: string[]): ServerConfig {
   // Load environment variables

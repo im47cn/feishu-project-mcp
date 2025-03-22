@@ -1,12 +1,12 @@
+import * as fs from 'fs';
+import * as path from 'path';
 import { McpService } from '../../core/server';
-import { Logger, LogLevel } from '../../utils/logger';
-import { McpServiceConfig } from '../../utils/config';
 import { FeishuIntegrator } from '../../integrators/feishu';
 import { TaskManager } from '../../managers/task';
 import { FeishuItemType } from '../../types/feishu';
-import { TaskStatus, TaskType } from '../../types/task';
-import * as fs from 'fs';
-import * as path from 'path';
+import { TaskStatus } from '../../types/task';
+import { McpServiceConfig } from '../../utils/config';
+import { Logger } from '../../utils/logger';
 
 jest.mock('../../integrators/feishu');
 jest.mock('../../managers/task');
