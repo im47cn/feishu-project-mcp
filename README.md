@@ -1,3 +1,5 @@
+[![MseeP.ai Security Assessment Badge](https://mseep.net/pr/im47cn-feishu-project-mcp-badge.png)](https://mseep.ai/app/im47cn-feishu-project-mcp)
+
 # 飞书项目MCP服务
 
 基于Model Context Protocol (MCP)的智能研发流程管理系统，实现端到端的需求管理与开发流程自动化。
